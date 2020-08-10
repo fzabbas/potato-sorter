@@ -4,6 +4,7 @@ from pathlib import Path
 from flask import Flask, request, url_for, redirect, send_from_directory
 # set the project root directory as the static folder, you can set others.
 app = Flask(__name__)
+app.config["DEBUG"] = True
 
 POTATO_ROOT = Path("potato")
 POTATO_ROOT.mkdir(parents=True, exist_ok=True)
@@ -35,7 +36,7 @@ def make_potato():
 def potato(potato_id):
     print(request.headers)
     print(request.headers.get('Accept', ""))
-    if request.headers.get('Accept', "") == "application/json":
+    if "application/json" in request.headers.get('Accept', ""):
         potato_path = path_for_potato(potato_id=potato_id)
         print(f"serving json for {potato_path}")
         with open(potato_path, "r") as f:
@@ -44,9 +45,34 @@ def potato(potato_id):
         print(f"Serving potato.html for {potato_id}")
         return app.send_static_file("potato.html")
 
+@app.route("/potato/<potato_id>", methods=["POST"])
+def update_potato(potato_id):
+    changes = request.form
+    user = changes["user"]
+    option = changes["option"]
+    weight = changes["weight"]
+    potato_path = path_for_potato(potato_id=potato_id)
+    with open(potato_path, "r") as f:
+        potato_state = json.load(f)
+    potato_table = potato_state["table"]
+    # if user not in potato_table["users"]:
+    #     potato_table["users"].append(user)
+    potato_table["choices"][option][user] = int(weight)
+    with open(potato_path,"w") as f:
+        json.dump(potato_state, f)
+
+
+
+
+    return "updated potato", 202
+    
+
+
+
+
 def generate_table(framework):
     if framework =="regret":
-        return {"options":[], "users":[], "choices":{}}
+        return {"users":[], "choices":{}}
 
 def path_for_potato(potato_id):
     return POTATO_ROOT / f"{potato_id}.json"
