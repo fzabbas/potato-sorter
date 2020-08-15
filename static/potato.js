@@ -7,8 +7,6 @@ var potato_id = window.location.pathname.split("/").pop();
 console.log(pathname);
 // console.log(pathname2);
 
-
-
 // specify the columns
 $(document).ready(function() {
     $.getJSON(pathname).done(function (data) {
@@ -22,8 +20,6 @@ $(document).ready(function() {
             }
         });
 
-        
-
         //adding click me buttons
         // columnDefs.push({headerName: ({cellRenderer: "btnCellRenderer"}), field: "blob",  editable:true, 
         //     cellRenderer: "btnCellRenderer", 
@@ -31,13 +27,9 @@ $(document).ready(function() {
         //         alert("was clicked");
         //     }}})
 
-            
-
-
         function numberParser(params) {
             return Number(params.newValue);
-          }
-
+        }
 
         var choices = data.table.choices;
         var rowData=[];
@@ -61,7 +53,6 @@ $(document).ready(function() {
           },
         components: { btnCellRenderer: BtnCellRenderer},
         // enableCellTextSelection=true
-
         };
 
         function onFirstDataRendered(params) {
@@ -108,7 +99,6 @@ $(document).ready(function() {
             this.btnClickedHandler = this.btnClickedHandler.bind(this);
             this.eGui.addEventListener('click', this.btnClickedHandler);
         }
-          
         
         BtnCellRenderer.prototype.getGui = function() {
             return this.eGui;
@@ -121,7 +111,6 @@ $(document).ready(function() {
          BtnCellRenderer.prototype.btnClickedHandler = function(event) {
            this.params.clicked(this.params.value);
         }
-          
 
         var eGridDiv = document.querySelector('#myGrid');
         var newGrid = new agGrid.Grid(eGridDiv, gridOptions);
@@ -129,28 +118,15 @@ $(document).ready(function() {
         function addUser() {
             columnDefs.push({headerName :"new user", field : "new user"});
             $("#myGrid").empty();
-            var grid = new agGrid.Grid(eGridDiv, gridOptions);
-            
-                
+            var grid = new agGrid.Grid(eGridDiv, gridOptions);                
         }
-        
 
         function addOption(){
             rowData.push({" ":"new option"})
             $("#myGrid").empty();
             var grid = new agGrid.Grid(eGridDiv, gridOptions);
-
-
-            // for (var name in columnDefs) {
-            //     // console.log(columnDefs[name]["headerName"]);
-            //     var userName = columnDefs[name]["headerName"]
-            //     var rowData1 = 
-            //     // console.log(columnDefs["headerName"]);
-            // }
-
-
-
         }
+
         $("#add-user").click(addUser);
         $("#add-option").click(addOption);
 
