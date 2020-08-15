@@ -12,6 +12,8 @@ pip install -r requirements.txt
 ```
 
 # potato-sorter - for deployment
+$ ssh root@potatosorter.com
+
 
 $ waitress-serve --call "api:create_app"
 

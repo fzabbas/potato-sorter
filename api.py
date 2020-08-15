@@ -39,14 +39,17 @@ def create_app():
     def potato(potato_id):
         print(request.headers)
         print(request.headers.get('Accept', ""))
-        if "application/json" in request.headers.get('Accept', ""):
-            potato_path = path_for_potato(potato_id=potato_id)
-            print(f"serving json for {potato_path}")
-            with open(potato_path, "r") as f:
-                return json.load(f)
-        else:
-            print(f"Serving potato.html for {potato_id}")
-            return app.send_static_file("potato.html")
+        print(f"Serving potato.html for {potato_id}")
+        return app.send_static_file("potato.html")
+
+    @app.route("/potato/<potato_id>/state", methods=["GET"])
+    def potato_state(potato_id):
+        print(request.headers)
+        print(request.headers.get('Accept', ""))
+        potato_path = path_for_potato(potato_id=potato_id)
+        print(f"serving json for {potato_path}")
+        with open(potato_path, "r") as f:
+            return json.load(f)
 
     @app.route("/potato/<potato_id>/option", methods=["POST"])
     def update_choice(potato_id):

@@ -9,7 +9,7 @@ console.log(pathname);
 
 // specify the columns
 $(document).ready(function() {
-    $.getJSON(pathname).done(function (data) {
+    $.getJSON(pathname+"/state").done(function (data) {
         console.log(data);
         $("#name").text(data.name);
         var columnDefs = [" "].concat(data.table.users).map(function(user){
