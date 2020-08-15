@@ -16,16 +16,28 @@ $(document).ready(function() {
         $("#name").text(data.name);
         var columnDefs = [" "].concat(data.table.users).map(function(user){
             if (user === " "){
-                return {headerName: user, field: user, editable:true}
+                return {headerName: user, field: user,  editable:true }
             } else {
                 return {headerName: user, field: user, editable:true, valueParser: numberParser}
             }
-            
         });
+
+        
+
+        //adding click me buttons
+        // columnDefs.push({headerName: ({cellRenderer: "btnCellRenderer"}), field: "blob",  editable:true, 
+        //     cellRenderer: "btnCellRenderer", 
+        //     cellRendererParams:{ clicked : function(field){
+        //         alert("was clicked");
+        //     }}})
+
+            
+
 
         function numberParser(params) {
             return Number(params.newValue);
           }
+
 
         var choices = data.table.choices;
         var rowData=[];
@@ -36,15 +48,20 @@ $(document).ready(function() {
             rowData.push(userDict);
         };
 
+        //********autosizing table */
         var gridOptions = {
         columnDefs: columnDefs,
         rowData: rowData,
+    
         onFirstDataRendered: onFirstDataRendered,
         onGridSizeChanged: onGridSizeChanged,
         onCellValueChanged: function(event) {
-            $.post(pathname,{user: event.colDef.field , option: event.data[" "] , weight: event.newValue})
+            $.post(pathname + "/weight",{user: event.colDef.field , option: event.data[" "] , weight: event.newValue})
             console.log('data after changes is: ', event.colDef.field, event.data[" "], event.newValue);
           },
+        components: { btnCellRenderer: BtnCellRenderer},
+        // enableCellTextSelection=true
+
         };
 
         function onFirstDataRendered(params) {
@@ -81,10 +98,62 @@ $(document).ready(function() {
             params.api.sizeColumnsToFit();
         };
 
+        function BtnCellRenderer() {}
+        BtnCellRenderer.prototype.init = function(params) {
+            this.params = params;
+          
+            this.eGui = document.createElement('button');
+            this.eGui.innerHTML = 'Click me!';
+          
+            this.btnClickedHandler = this.btnClickedHandler.bind(this);
+            this.eGui.addEventListener('click', this.btnClickedHandler);
+        }
+          
+        
+        BtnCellRenderer.prototype.getGui = function() {
+            return this.eGui;
+        }
+
+        BtnCellRenderer.prototype.destroy = function() {
+            this.eGui.removeEventListener('click', this.btnClickedHandler);
+        }
+        
+         BtnCellRenderer.prototype.btnClickedHandler = function(event) {
+           this.params.clicked(this.params.value);
+        }
+          
 
         var eGridDiv = document.querySelector('#myGrid');
-        new agGrid.Grid(eGridDiv, gridOptions);
+        var newGrid = new agGrid.Grid(eGridDiv, gridOptions);
+
+        function addUser() {
+            columnDefs.push({headerName :"new user", field : "new user"});
+            $("#myGrid").empty();
+            var grid = new agGrid.Grid(eGridDiv, gridOptions);
+            
+                
+        }
         
+
+        function addOption(){
+            rowData.push({" ":"new option"})
+            $("#myGrid").empty();
+            var grid = new agGrid.Grid(eGridDiv, gridOptions);
+
+
+            // for (var name in columnDefs) {
+            //     // console.log(columnDefs[name]["headerName"]);
+            //     var userName = columnDefs[name]["headerName"]
+            //     var rowData1 = 
+            //     // console.log(columnDefs["headerName"]);
+            // }
+
+
+
+        }
+        $("#add-user").click(addUser);
+        $("#add-option").click(addOption);
+
     });
 });
 

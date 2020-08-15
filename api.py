@@ -45,7 +45,7 @@ def potato(potato_id):
         print(f"Serving potato.html for {potato_id}")
         return app.send_static_file("potato.html")
 
-@app.route("/potato/<potato_id>", methods=["POST"])
+@app.route("/potato/<potato_id>/weight", methods=["POST"])
 def update_potato(potato_id):
     changes = request.form
     user = changes["user"]
@@ -60,16 +60,8 @@ def update_potato(potato_id):
     potato_table["choices"][option][user] = int(weight)
     with open(potato_path,"w") as f:
         json.dump(potato_state, f)
-
-
-
-
     return "updated potato", 202
     
-
-
-
-
 def generate_table(framework):
     if framework =="regret":
         return {"users":[], "choices":{}}
