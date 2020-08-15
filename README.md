@@ -1,3 +1,20 @@
+## Setup
+
+```
+# Create the virtual environment
+python3 -m venv .venv
+
+# Activate the virtual environment
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+# potato-sorter - for deployment
+
+$ waitress-serve --call 'flaskr:create_app'
+
 # potato-sorter
 
 FLASK_APP=api FLASK_ENV=development flask run
