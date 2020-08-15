@@ -13,7 +13,8 @@ pip install -r requirements.txt
 
 # potato-sorter - for deployment
 
-$ waitress-serve --call 'flaskr:create_app'
+$ waitress-serve --call "api:create_app"
+
 
 # potato-sorter
 

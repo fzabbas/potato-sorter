@@ -48,8 +48,19 @@ $(document).ready(function() {
         onFirstDataRendered: onFirstDataRendered,
         onGridSizeChanged: onGridSizeChanged,
         onCellValueChanged: function(event) {
-            $.post(pathname + "/weight",{user: event.colDef.field , option: event.data[" "] , weight: event.newValue})
-            console.log('data after changes is: ', event.colDef.field, event.data[" "], event.newValue);
+            console.log(event.colDef.field, "coldef field");
+            if (event.colDef.field === " "){
+                console.log(event.data[" "], event.newValue);
+                $.post(pathname + "/option",{ newOption: event.newValue , oldOption: event.oldValue})
+
+            } else {
+                $.post(pathname + "/weight",{user: event.colDef.field , option: event.data[" "] , weight: event.newValue})
+                console.log(event.data[" "], event.newValue);
+                console.log('data after changes is: ', event.colDef.field, event.data[" "], event.newValue);
+            }
+            // $.post(pathname + "/weight",{user: event.colDef.field , option: event.data[" "] , weight: event.newValue})
+            // console.log(event.data[" "], event.newValue);
+            // console.log('data after changes is: ', event.colDef.field, event.data[" "], event.newValue);
           },
         components: { btnCellRenderer: BtnCellRenderer},
         // enableCellTextSelection=true
@@ -116,19 +127,28 @@ $(document).ready(function() {
         var newGrid = new agGrid.Grid(eGridDiv, gridOptions);
 
         function addUser() {
-            columnDefs.push({headerName :"new user", field : "new user"});
+            var newUsername = $("#add-user-textbox").val();
+            console.log(newUsername);
+            columnDefs.push({headerName : newUsername, field : newUsername, editable:true});
             $("#myGrid").empty();
-            var grid = new agGrid.Grid(eGridDiv, gridOptions);                
+            var grid = new agGrid.Grid(eGridDiv, gridOptions); 
+            $.post(pathname + "/user",{ newUser: newUsername})
+               
         }
 
         function addOption(){
-            rowData.push({" ":"new option"})
+            var newOption = $("#add-option-textbox").val();
+            console.log(newOption)
+            rowData.push({" ":newOption})
+            // $.post(pathname + "/option",{ newOption: "Enter new option:" , oldOption: " "})
             $("#myGrid").empty();
             var grid = new agGrid.Grid(eGridDiv, gridOptions);
+            $.post(pathname + "/option",{ newOption: newOption , oldOption: " "})
+
         }
 
-        $("#add-user").click(addUser);
-        $("#add-option").click(addOption);
+        $("#add-user-btn").click(addUser);
+        $("#add-option-btn").click(addOption);
 
     });
 });

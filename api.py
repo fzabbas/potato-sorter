@@ -48,6 +48,24 @@ def create_app():
             print(f"Serving potato.html for {potato_id}")
             return app.send_static_file("potato.html")
 
+    @app.route("/potato/<potato_id>/option", methods=["POST"])
+    def update_choice(potato_id):
+        changes = request.form
+        old_choice = changes["oldOption"]
+        new_choice = changes["newOption"]
+        potato_path = path_for_potato(potato_id=potato_id)
+        with open(potato_path, "r") as f:
+            potato_state = json.load(f)
+        potato_table = potato_state["table"]
+        if old_choice ==" ":
+            potato_table["choices"][new_choice]= {}
+        else:
+            potato_table["choices"][new_choice] = potato_table["choices"].pop(old_choice) 
+        with open(potato_path,"w") as f:
+            json.dump(potato_state, f)
+        return "updated potato", 202
+
+
     @app.route("/potato/<potato_id>/weight", methods=["POST"])
     def update_potato(potato_id):
         changes = request.form
@@ -61,6 +79,19 @@ def create_app():
         # if user not in potato_table["users"]:
         #     potato_table["users"].append(user)
         potato_table["choices"][option][user] = int(weight)
+        with open(potato_path,"w") as f:
+            json.dump(potato_state, f)
+        return "updated potato", 202
+    
+    @app.route("/potato/<potato_id>/user", methods=["POST"])
+    def update_user(potato_id):
+        changes = request.form
+        user = changes["newUser"]
+        potato_path = path_for_potato(potato_id=potato_id)
+        with open(potato_path, "r") as f:
+            potato_state = json.load(f)
+        potato_table = potato_state["table"]
+        potato_table["users"].append(user)
         with open(potato_path,"w") as f:
             json.dump(potato_state, f)
         return "updated potato", 202
