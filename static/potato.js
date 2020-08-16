@@ -11,6 +11,7 @@ console.log(pathname);
 $(document).ready(function() {
     $.getJSON(pathname+"/state").done(function (data) {
         console.log(data);
+        console.log(data.table.users, "<--users");
         $("#name").text(data.name);
         var columnDefs = [" "].concat(data.table.users).map(function(user){
             if (user === " "){
@@ -19,6 +20,12 @@ $(document).ready(function() {
                 return {headerName: user, field: user, editable:true, valueParser: numberParser}
             }
         });
+        // function getColumnNames(colDefs) {
+        //     var colNames = []
+        //     for (var column in colDefs){
+        //         colNames.push()
+        //     }
+        // }
 
         //adding click me buttons
         // columnDefs.push({headerName: ({cellRenderer: "btnCellRenderer"}), field: "blob",  editable:true, 
@@ -129,22 +136,24 @@ $(document).ready(function() {
         function addUser() {
             var newUsername = $("#add-user-textbox").val();
             console.log(newUsername);
-            columnDefs.push({headerName : newUsername, field : newUsername, editable:true});
-            $("#myGrid").empty();
-            var grid = new agGrid.Grid(eGridDiv, gridOptions); 
-            $.post(pathname + "/user",{ newUser: newUsername})
-               
+            if (!data.table.users.includes(newUsername)){
+                columnDefs.push({headerName : newUsername, field : newUsername, editable:true});
+                $("#myGrid").empty();
+                var grid = new agGrid.Grid(eGridDiv, gridOptions); 
+                $.post(pathname + "/user",{ newUser: newUsername})
+                data.table.users.push(newUsername)
+            }   
         }
 
         function addOption(){
             var newOption = $("#add-option-textbox").val();
-            console.log(newOption)
-            rowData.push({" ":newOption})
-            // $.post(pathname + "/option",{ newOption: "Enter new option:" , oldOption: " "})
-            $("#myGrid").empty();
-            var grid = new agGrid.Grid(eGridDiv, gridOptions);
-            $.post(pathname + "/option",{ newOption: newOption , oldOption: " "})
-
+            if (!(newOption in data.table.choices)){
+                rowData.push({" ":newOption})
+                $("#myGrid").empty();
+                var grid = new agGrid.Grid(eGridDiv, gridOptions);
+                $.post(pathname + "/option",{ newOption: newOption , oldOption: " "})   
+                data.table.choices[newOption] = " "
+            }
         }
 
         $("#add-user-btn").click(addUser);

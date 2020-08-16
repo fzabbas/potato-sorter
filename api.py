@@ -90,15 +90,17 @@ def create_app():
     def update_user(potato_id):
         changes = request.form
         user = changes["newUser"]
-        potato_path = path_for_potato(potato_id=potato_id)
+        potato_path = path_for_potato(potato_id=potato_id)   
+
         with open(potato_path, "r") as f:
             potato_state = json.load(f)
-        potato_table = potato_state["table"]
-        potato_table["users"].append(user)
-        with open(potato_path,"w") as f:
-            json.dump(potato_state, f)
-        return "updated potato", 202
-        
+            potato_table = potato_state["table"]
+        if user not in potato_table["users"]:
+            potato_table["users"].append(user)
+            with open(potato_path,"w") as f:
+                json.dump(potato_state, f)
+            return "updated potato", 202
+            
     def generate_table(framework):
         if framework =="regret":
             return {"users":[], "choices":{}}
